@@ -68,13 +68,14 @@
         <h4>Network exposition</h4>
 
         <label>Automatically started Tor Hidden service</label>
-        <p style="color:#45ada8; font-weight:bolder;">http://{{admin.node.hidden_service}}</p>
+        <p class="glctext">http://{{admin.node.hidden_service}}</p>
 
         <label><b>(Optional)</b> Public Site</label>
         <input type="url" name="public_site" ng-model="admin.node.public_site">
-        <p class="text-error"
-        ng-show="contentForm.public_site.$error.url">Invalid format for Tor2web public site (should be "https://thirteenchars123.tor2web.org")</p>
-        <div ng-hide="admin,node.public_site">
+        <p class="text-error" ng-show="contentForm.public_site.$error.url">
+            Invalid format for public site URL (example: "https://thirteenchars123.tor2web.org")
+        </p>
+        <div ng-show="admin.node.public_site">
             Configured: <a href="{{admin.node.public_site}}">{{admin.node.public_site}}</a>
         </div>
 
