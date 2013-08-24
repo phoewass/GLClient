@@ -49,6 +49,55 @@ Submission.prototype.finalize = function(cb) {
   });
 }
 
+function authenticate(password, role, username, cb) {
+
+  request
+  .post(base + '/authentication')
+  .set('Cookie', 'XSRF-TOKEN=antani;')
+  .set('X-XSRF-TOKEN', 'antani')
+  .send({
+    'password': password,
+    'role': role,
+    'username': username
+  })
+  .end(function(err, res){
+    cb(res.body);
+  });
+
+}
+
+function WBTip(receipt) {
+  this.receipt = receipt;
+  this.session_id = null;
+  this.id = '88197484-655c-e805-6420-9c39e6834721';
+}
+
+WBTip.prototype.authenticate = function(cb) {
+  var self = this;
+
+  authenticate(this.receipt, 'wb', '', function(session) {
+    self.session_id = session.session_id;
+    cb();
+  });
+}
+
+WBTip.prototype.comment = function(text, cb) {
+
+  request
+  .post(base + '/tip/' + this.id + '/comments')
+  .set('Cookie', 'XSRF-TOKEN=antani;')
+  .set('X-XSRF-TOKEN', 'antani')
+  .set('X-Session', this.session_id)
+  .send({
+    'content': text,
+    'tip_id': this.id
+  })
+  .end(function(err, res){
+    cb(res.body);
+  });
+
+}
+
 function listContexts(cb) {
   request
   .get(base + '/contexts')
@@ -66,14 +115,19 @@ function listReceivers(cb) {
 }
 
 listContexts(function(contexts){
-  sub = new Submission(contexts[0]);
+  var sub = new Submission(contexts[0]);
   sub.create(function(res){
     sub.randomFill();
     sub.finalize(function(submission){
       console.log("Receipt: " + submission.receipt);
+      var tip = new WBTip(submission.receipt);
+      tip.authenticate(function(){
+        tip.comment("Ciao belli!", function(){
+          console.log("I Wrote a comment!");
+        });
+      });
     });
   });
-
 });
 
 // createSubmission(function(submission){
