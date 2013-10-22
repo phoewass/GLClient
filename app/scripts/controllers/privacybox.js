@@ -20,8 +20,8 @@ GLClient.controller('PrivacyBoxCtrl',
       $rootScope.privacy = 'low';
     }
 
-    $scope.displayBox = true;
-    $scope.boxes = 'open';
+    $scope.displayBox = false;
+    $scope.boxes = 'closed';
 
     $scope.showBox = function() {
       $scope.displayBox = true;
@@ -31,6 +31,18 @@ GLClient.controller('PrivacyBoxCtrl',
     $scope.hideBox = function() {
       $scope.displayBox = false;
       $scope.boxes = 'closed';
+    }
+
+    /* I don't know why there are also .boxes var and just the bool,
+       but I'm patching, and "when you patch, you're like a chameleon
+     */
+    $scope.flipBox = function() {
+      $scope.displayBox = !$scope.displayBox;
+      if ($scope.boxes == 'closed') {
+          $scope.boxes = 'open';
+      } else {
+          $scope.boxed = 'closed';
+      }
     }
 
 }]);
